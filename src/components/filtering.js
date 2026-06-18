@@ -1,25 +1,22 @@
-import { createComparison, defaultRules } from "../lib/compare.js";
+export function initFiltering(elements) {
 
-// @todo: #4.3 — настроить компаратор
-const compare = createComparison(defaultRules);
+    const updateIndexes = (elements, indexes) => {
+        Object.keys(indexes).forEach((elementName) => {
+            elements[elementName].append(
+                ...Object.values(indexes[elementName]).map(name => {
+                    const option = document.createElement('option');
 
-export function initFiltering(elements, indexes) {
-    // @todo: #4.1 — заполнить выпадающие списки опциями
-    Object.keys(indexes).forEach((elementName) => {
-        elements[elementName].append(
-            ...Object.values(indexes[elementName]).map(name => {
-                const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
 
-                option.value = name;
-                option.textContent = name;
+                    return option;
+                })
+            );
+        });
+    };
 
-                return option;
-            })
-        );
-    });
+    const applyFiltering = (query, state, action) => {
 
-    return (data, state, action) => {
-        // @todo: #4.2 — обработать очистку поля
         if (action && action.name === 'clear') {
             const field = action.dataset.field;
             const input = action.parentElement.querySelector(`[name="${field}"]`);
@@ -28,25 +25,26 @@ export function initFiltering(elements, indexes) {
             state[field] = '';
         }
 
-        // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data.filter(row => {
-            const isMatchedByDefaultRules = compare(row, state);
+        const filter = {};
 
-            if (!isMatchedByDefaultRules) {
-                return false;
+        Object.keys(elements).forEach(key => {
+            if (elements[key]) {
+                if (
+                    ['INPUT', 'SELECT'].includes(elements[key].tagName)
+                    && elements[key].value
+                ) {
+                    filter[`filter[${elements[key].name}]`] = elements[key].value;
+                }
             }
-
-            const total = Number(row.total);
-
-            if (state.totalFrom && total < Number(state.totalFrom)) {
-                return false;
-            }
-
-            if (state.totalTo && total > Number(state.totalTo)) {
-                return false;
-            }
-
-            return true;
         });
-    }
+
+        return Object.keys(filter).length
+            ? Object.assign({}, query, filter)
+            : query;
+    };
+
+    return {
+        updateIndexes,
+        applyFiltering
+    };
 }
