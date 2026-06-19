@@ -18,27 +18,18 @@ export function initData(sourceData) {
     }));
 
     const getIndexes = async () => {
-        if (!sellers || !customers) {
-            const [sellerData, customerData] = await Promise.all([
-                fetch(`${BASE_URL}/sellers`).then(res => res.json()),
-                fetch(`${BASE_URL}/customers`).then(res => res.json())
-            ]);
+    if (!sellers || !customers) {
+        const [sellerData, customerData] = await Promise.all([
+            fetch(`${BASE_URL}/sellers`).then(res => res.json()),
+            fetch(`${BASE_URL}/customers`).then(res => res.json())
+        ]);
 
-            sellers = makeIndex(
-    sellerData,
-    'id',
-    v => `${v.first_name} ${v.last_name}`
-);
+        sellers = sellerData;
+        customers = customerData;
+    }
 
-customers = makeIndex(
-    customerData,
-    'id',
-    v => `${v.first_name} ${v.last_name}`
-);
-        }
-
-        return { sellers, customers };
-    };
+    return { sellers, customers };
+};
 
     const getRecords = async (query, isUpdated = false) => {
 

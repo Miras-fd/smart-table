@@ -96,8 +96,8 @@ async function init() {
     const indexes = await api.getIndexes();
 
     updateIndexes(sampleTable.filter.elements, {
-        searchBySeller: indexes.sellers
-    });
+    searchBySeller: indexes.sellers
+});
 }
 
 init().then(render);
