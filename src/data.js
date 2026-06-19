@@ -24,8 +24,17 @@ export function initData(sourceData) {
                 fetch(`${BASE_URL}/customers`).then(res => res.json())
             ]);
 
-            sellers = sellerData;
-customers = customerData;
+            sellers = makeIndex(
+    sellerData,
+    'id',
+    v => `${v.first_name} ${v.last_name}`
+);
+
+customers = makeIndex(
+    customerData,
+    'id',
+    v => `${v.first_name} ${v.last_name}`
+);
         }
 
         return { sellers, customers };
