@@ -51,6 +51,10 @@ async function render(action) {
 
     const { total, items } = await api.getRecords(query);
 
+    console.log('TOTAL:', total);
+console.log('ITEMS:', items);
+console.log('ITEMS LENGTH:', items.length);
+
     updatePagination(total, query);
 
     sampleTable.render(items);
@@ -96,8 +100,10 @@ async function init() {
     const indexes = await api.getIndexes();
 
     updateIndexes(sampleTable.filter.elements, {
-    searchBySeller: indexes.sellers
-});
+        searchBySeller: indexes.sellers
+    });
+
+    await render();
 }
 
-init().then(render);
+init();
